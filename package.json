@@ -1,0 +1,28 @@
+{
+  "name": "pggy",
+  "version": "0.0.1",
+  "description": "Postgres terminal UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "postgres",
+    "blessed",
+    "knex",
+    "pg"
+  ],
+  "author": "Bulkan Evcimen <bulkan@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "blessed": "0.0.29",
+    "bluebird": "^1.2.4",
+    "pg": "^3.0.3",
+    "knex": "^0.5.13"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "sinon": "^1.9.1",
+    "mocha": "^1.18.2"
+  }
+}
