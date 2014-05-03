@@ -1,4 +1,5 @@
-var blessed = require('blessed')
+var util = require('util')
+  , blessed = require('blessed')
   , Knex = require('knex');
 
 // TODO: load this info from a config file
@@ -17,28 +18,51 @@ Knex.knex = Knex.initialize({
 var screen = blessed.screen();
 
 // Create a box perfectly centered horizontally and vertically.
-var box = blessed.box({
-  top: 'center',
-  width: '50%',
-  height: '100%',
-  content: "TABLES",
+var tablesBox = blessed.list({
+  width: '30%',
+  height: '90%',
+  content: "{center}TABLES{/center}",
   tags: true,
+  scrollable: true,
   border: {
     type: 'line'
   },
+  padding: {
+    left: 1,
+    bottom: 2
+  },
+  keys: true,
   style: {
     fg: 'white',
-    bg: 'magenta',
+    bg: 'blue',
     border: {
       fg: '#ffffff'
     },
     hover: {
       bg: 'green'
+    },
+    selected: {
+      fg: "white",
+      bg: "black"
     }
   }
 });
 
-screen.append(box);
+screen.append(tablesBox);
+
+// store list of tables
+var tables = [];
+var knex = Knex.knex;
+
+tablesBox.on('select', function(event, selectedIndex){
+  var tableName = tables[selectedIndex];
+
+  knex(tableName)
+    .select()
+    .then(function(rows){
+    })
+
+});
 
 // Quit on Escape, q, or Control-C.
 screen.key(['escape', 'q', 'C-c'], function(ch, key) {
@@ -46,7 +70,6 @@ screen.key(['escape', 'q', 'C-c'], function(ch, key) {
 });
 
 
-var knex = Knex.knex;
 
 // load the tables in this database
 knex('information_schema.tables')
@@ -57,9 +80,11 @@ knex('information_schema.tables')
   })
   .orderBy('table_name')
   .then(function(rows){
-    rows.forEach(function(row, i){
-      box.setLine(i+1, row.table_name);
+    rows.forEach(function(row){
+      tables.push(row.table_name)
     });
-    screen.render();
+    tablesBox.setItems(tables);
 
+    screen.render();
+    tablesBox.focus();
   })

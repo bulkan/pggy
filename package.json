@@ -18,7 +18,9 @@
     "blessed": "0.0.29",
     "bluebird": "^1.2.4",
     "pg": "^3.0.3",
-    "knex": "^0.5.13"
+    "knex": "^0.5.13",
+    "bunyan": "^0.22.3",
+    "lodash": "^2.4.1"
   },
   "devDependencies": {
     "chai": "^1.9.1",
