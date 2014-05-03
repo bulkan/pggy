@@ -1,6 +1,18 @@
 var util = require('util')
   , blessed = require('blessed')
+  , bunyan = require('bunyan')
+  , _ = require('lodash')
   , Knex = require('knex');
+
+var log = bunyan.createLogger({
+  name: 'pggy',
+  streams: [
+    {
+      'level': 'debug',
+      'path': 'pggy.log'
+    }
+  ]
+})
 
 // TODO: load this info from a config file
 Knex.knex = Knex.initialize({
@@ -56,10 +68,12 @@ var knex = Knex.knex;
 
 tablesBox.on('select', function(event, selectedIndex){
   var tableName = tables[selectedIndex];
+  log.debug('selected table:', tableName);
 
   knex(tableName)
     .select()
     .then(function(rows){
+      log.debug(rows);
     })
 
 });
