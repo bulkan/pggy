@@ -32,8 +32,8 @@ var screen = blessed.screen();
 // Create a box perfectly centered horizontally and vertically.
 var tablesBox = blessed.list({
   width: '30%',
-  height: '90%',
-  content: "{center}TABLES{/center}",
+  height: '95%',
+  label: "{center}tables{/center}",
   tags: true,
   scrollable: true,
   border: {
@@ -60,12 +60,30 @@ var tablesBox = blessed.list({
   }
 });
 
+var queryResults = blessed.box({
+  width: '70%',
+  height: '95%',
+  left: '30%',
+  tags: true,
+  scrollable: true,
+  label: '{center}results{/center}',
+  border: {
+    type: 'line'
+  },
+  padding: {
+    left: 1,
+    bottom: 2
+  }
+});
+
 screen.append(tablesBox);
+screen.append(queryResults);
 
 // store list of tables
-var tables = [];
-var knex = Knex.knex;
+var tables = []
+  , knex = Knex.knex;  //refence to knex instance
 
+// load the table
 tablesBox.on('select', function(event, selectedIndex){
   var tableName = tables[selectedIndex];
   log.debug('selected table:', tableName);
@@ -73,15 +91,44 @@ tablesBox.on('select', function(event, selectedIndex){
   knex(tableName)
     .select()
     .then(function(rows){
+      if (rows.length === 0) {
+        return;
+      }
+      var columns = _.keys(rows[0]);
+
+      queryResults.setContent(columns.join('|'))
+
+      _(rows).each(function(row){
+        queryResults.pushLine(_.values(row).join('|'))
+      })
+      
+      screen.render();
       log.debug(rows);
     })
-
 });
 
-// Quit on Escape, q, or Control-C.
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-  return process.exit(0);
-});
+
+rawQuery.on('submit', function(queryText){
+  knex
+    .raw(queryText)
+    .then(function(resp){
+      if (resp.rows.length === 0) {
+        return;
+      }
+      var rows = resp.rows;
+
+      var columns = _.keys(rows[0]);
+
+      queryResults.setContent(columns.join('|'))
+
+      _(rows).each(function(row){
+        queryResults.pushLine(_.values(row).join('|'))
+      })
+      
+      screen.render();
+      log.debug(rows);
+    });
+})
 
 
 
