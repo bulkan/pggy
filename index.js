@@ -60,6 +60,25 @@ var tablesBox = blessed.list({
   }
 });
 
+var rawQuery = blessed.textbox({
+  width: '100%',
+  height: '7%',
+  top: '95%',
+  border: {
+    type: 'line'
+  },
+  label: 'sql: ',
+  padding: {
+    left: 1,
+  },
+  inputOnFocus: true,
+  right: '0',
+  fg: 'white',
+  bg: 'black',
+  barBg: 'default',
+  barFg: 'blue'
+})
+
 var queryResults = blessed.box({
   width: '70%',
   height: '95%',
@@ -78,6 +97,17 @@ var queryResults = blessed.box({
 
 screen.append(tablesBox);
 screen.append(queryResults);
+screen.append(rawQuery);
+
+// Quit on Escape, q, or Control-C.
+screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+  return process.exit(0);
+});
+
+
+screen.key(['r', 'C-c'], function(ch, key) {
+  rawQuery.focus();
+});
 
 // store list of tables
 var tables = []
