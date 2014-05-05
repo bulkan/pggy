@@ -46,8 +46,8 @@ var tablesBox = blessed.list({
   },
   keys: true,
   style: {
-    fg: 'white',
-    bg: 'blue',
+    bg: 'black',
+    fg: '#cccccc',
     border: {
       fg: '#ffffff'
     },
@@ -55,7 +55,7 @@ var tablesBox = blessed.list({
       bg: 'green'
     },
     selected: {
-      fg: "white",
+      fg: "lightgreen",
       bg: "black"
     }
   }
