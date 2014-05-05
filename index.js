@@ -1,5 +1,6 @@
 var util = require('util')
   , blessed = require('blessed')
+  , conf = require('rc')('pggy', {})
   , bunyan = require('bunyan')
   , _ = require('lodash')
   , Knex = require('knex');
@@ -18,10 +19,10 @@ var log = bunyan.createLogger({
 Knex.knex = Knex.initialize({
   client: 'pg',
   connection: {
-    host     : 'localhost',
-    user     : 'bulkan',
-    password : '',
-    database : 'franq-dev',
+    host     : conf.hostname,
+    user     : conf.username,
+    password : conf.password,
+    database : conf.database,
   }
 });
 

@@ -21,6 +21,7 @@
     "knex": "^0.5.13",
     "bunyan": "^0.22.3",
     "lodash": "^2.4.1"
+    "rc": "^0.3.5"
   },
   "devDependencies": {
     "chai": "^1.9.1",
