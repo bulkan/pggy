@@ -45,6 +45,7 @@ var tablesBox = blessed.list({
     bottom: 2
   },
   keys: true,
+  vi: true,
   style: {
     bg: 'black',
     fg: '#cccccc',
@@ -55,11 +56,47 @@ var tablesBox = blessed.list({
       bg: 'green'
     },
     selected: {
-      fg: "lightgreen",
-      bg: "black"
+      fg: "gray",
+      bg: "black",
+      inverse: true
     }
+  },
+  search: function(cb){
+    log.debug('search');
+    searchBox.focus();
+    searchBox.show();
+
+    screen.render();
+
+    searchBox.once('submit', function(searchString){
+      log.debug(searchString);
+      searchBox.hide();
+      tablesBox.focus();
+      screen.render();
+      return cb(searchString)
+    })
   }
 });
+
+var searchBox = blessed.textbox({
+  width: '30%',
+  height: '7%',
+  top: 'center',
+  left: '30%',
+  border: {
+    type: 'line',
+    fg: 'blue'
+  },
+  label: 'table search',
+  padding: {
+    left: 1,
+  },
+  inputOnFocus: true,
+  right: '0',
+  fg: 'white',
+  bg: 'black',
+});
+
 
 var rawQuery = blessed.textbox({
   width: '100%',
@@ -77,8 +114,8 @@ var rawQuery = blessed.textbox({
   fg: 'white',
   bg: 'black',
   barBg: 'default',
-  barFg: 'blue'
-})
+  barFg: 'blue',
+});
 
 var queryResults = blessed.box({
   width: '70%',
@@ -96,9 +133,12 @@ var queryResults = blessed.box({
   }
 });
 
+searchBox.hide();
+
 screen.append(tablesBox);
 screen.append(queryResults);
 screen.append(rawQuery);
+screen.append(searchBox);
 
 // Quit on Escape, q, or Control-C.
 screen.key(['escape', 'q', 'C-c'], function(ch, key) {
@@ -172,6 +212,7 @@ knex('information_schema.tables')
   })
   .orderBy('table_name')
   .then(function(rows){
+    log.debug(rows.length);
     rows.forEach(function(row){
       tables.push(row.table_name)
     });
@@ -179,4 +220,5 @@ knex('information_schema.tables')
 
     screen.render();
     tablesBox.focus();
+    log.debug(tablesBox.ritems);
   })
