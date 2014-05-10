@@ -3,7 +3,8 @@ var util = require('util')
   , conf = require('rc')('pggy', {})
   , bunyan = require('bunyan')
   , _ = require('lodash')
-  , Knex = require('knex');
+  , Knex = require('knex')
+  , queries = require('./lib/queries');
 
 var log = bunyan.createLogger({
   name: 'pggy',
@@ -25,6 +26,19 @@ Knex.knex = Knex.initialize({
     database : conf.database,
   }
 });
+
+//Knex.knex
+  //.raw(queries.getColumnTypes('acl'))
+  //.then(function(resp){
+    //if (resp.rows.length === 0) {
+      //return;
+    //}
+    //var rows = resp.rows;
+
+    //console.log(resp.rows);
+
+  //});
+
 
 
 // Create a screen object.
@@ -151,8 +165,8 @@ screen.key(['r', 'C-c'], function(ch, key) {
 });
 
 // store list of tables
-var tables = []
-  , knex = Knex.knex;  //refence to knex instance
+var tables = [],
+    knex = Knex.knex;  //refence to knex instance
 
 // load the table
 tablesBox.on('select', function(event, selectedIndex){
