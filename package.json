@@ -15,6 +15,7 @@
   "author": "Bulkan Evcimen <bulkan@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "asciitable": "0.0.7",
     "blessed": "0.0.29",
     "bluebird": "^1.2.4",
     "pg": "^3.0.3",

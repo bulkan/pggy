@@ -1,6 +1,7 @@
 var util = require('util')
   , blessed = require('blessed')
   , conf = require('rc')('pggy', {})
+  , asciitable = require('asciitable')
   , bunyan = require('bunyan')
   , _ = require('lodash')
   , Knex = require('knex')
@@ -168,6 +169,22 @@ screen.key(['r', 'C-c'], function(ch, key) {
 var tables = [],
     knex = Knex.knex;  //refence to knex instance
 
+
+function getTable(columns, rows){
+  var options = {
+    intersectionCharacter: "*",
+    skinny: true,
+    columns: columns
+  };
+
+  _(rows).each(function(row){
+    log.debug(row);
+    queryResults.pushLine(_.values(row).join('|'))
+  })
+
+  return asciitable(options, rows);
+}
+
 // load the table
 tablesBox.on('select', function(event, selectedIndex){
   var tableName = tables[selectedIndex];
@@ -181,15 +198,14 @@ tablesBox.on('select', function(event, selectedIndex){
       }
       var columns = _.keys(rows[0]);
 
-      queryResults.setContent(columns.join('|'))
-
-      _(rows).each(function(row){
-        queryResults.pushLine(_.values(row).join('|'))
-      })
+      queryResults.setText(getTable(columns, rows));
       
       screen.render();
       log.debug(rows);
     })
+    .catch(function(err){
+      log.error(err);
+    });
 });
 
 
@@ -201,17 +217,15 @@ rawQuery.on('submit', function(queryText){
         return;
       }
       var rows = resp.rows;
-
       var columns = _.keys(rows[0]);
 
-      queryResults.setContent(columns.join('|'))
-
-      _(rows).each(function(row){
-        queryResults.pushLine(_.values(row).join('|'))
-      })
+      queryResults.setText(getTable(columns, resp.rows));
       
       screen.render();
       log.debug(rows);
+    })
+    .catch(function(err){
+      log.error(err);
     });
 })
 
