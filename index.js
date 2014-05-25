@@ -1,11 +1,11 @@
 var util = require('util')
   , blessed = require('blessed')
   , conf = require('rc')('pggy', {})
-  , asciitable = require('asciitable')
   , bunyan = require('bunyan')
   , _ = require('lodash')
   , Knex = require('knex')
-  , queries = require('./lib/queries');
+  , getTableInfo  = require('./lib/tableInfo')
+  , utils;
 
 var log = bunyan.createLogger({
   name: 'pggy',
@@ -17,7 +17,6 @@ var log = bunyan.createLogger({
   ]
 })
 
-// TODO: load this info from a config file
 Knex.knex = Knex.initialize({
   client: 'pg',
   connection: {
@@ -28,22 +27,32 @@ Knex.knex = Knex.initialize({
   }
 });
 
-//Knex.knex
-  //.raw(queries.getColumnTypes('acl'))
-  //.then(function(resp){
-    //if (resp.rows.length === 0) {
-      //return;
-    //}
-    //var rows = resp.rows;
-
-    //console.log(resp.rows);
-
-  //});
-
+utils = require('./lib/utils')(Knex.knex, log);
 
 
 // Create a screen object.
 var screen = blessed.screen();
+
+var searchBox = blessed.textbox({
+  width: '30%',
+  height: '7%',
+  top: 'center',
+  left: '30%',
+  border: {
+    type: 'line',
+    fg: 'blue'
+  },
+  label: 'table search',
+  padding: {
+    left: 1,
+  },
+  inputOnFocus: true,
+  right: '0',
+  fg: 'white',
+  bg: 'black',
+});
+
+
 
 // Create a box perfectly centered horizontally and vertically.
 var tablesBox = blessed.list({
@@ -93,24 +102,7 @@ var tablesBox = blessed.list({
   }
 });
 
-var searchBox = blessed.textbox({
-  width: '30%',
-  height: '7%',
-  top: 'center',
-  left: '30%',
-  border: {
-    type: 'line',
-    fg: 'blue'
-  },
-  label: 'table search',
-  padding: {
-    left: 1,
-  },
-  inputOnFocus: true,
-  right: '0',
-  fg: 'white',
-  bg: 'black',
-});
+var tableInfo = getTableInfo();
 
 
 var rawQuery = blessed.textbox({
@@ -130,6 +122,7 @@ var rawQuery = blessed.textbox({
   bg: 'black',
   barBg: 'default',
   barFg: 'blue',
+  vi: true
 });
 
 var queryResults = blessed.box({
@@ -148,20 +141,23 @@ var queryResults = blessed.box({
   }
 });
 
+
 searchBox.hide();
+tableInfo.hide();
 
 screen.append(tablesBox);
 screen.append(queryResults);
 screen.append(rawQuery);
 screen.append(searchBox);
+screen.append(tableInfo);
 
 // Quit on Escape, q, or Control-C.
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+screen.key(['C-q'], function(ch, key) {
   return process.exit(0);
 });
 
 
-screen.key(['r', 'C-c'], function(ch, key) {
+screen.key(['r', 'C-r'], function(ch, key) {
   rawQuery.focus();
 });
 
@@ -170,20 +166,6 @@ var tables = [],
     knex = Knex.knex;  //refence to knex instance
 
 
-function getTable(columns, rows){
-  var options = {
-    intersectionCharacter: "*",
-    skinny: true,
-    columns: columns
-  };
-
-  _(rows).each(function(row){
-    log.debug(row);
-    queryResults.pushLine(_.values(row).join('|'))
-  })
-
-  return asciitable(options, rows);
-}
 
 // load the table
 tablesBox.on('select', function(event, selectedIndex){
@@ -198,7 +180,7 @@ tablesBox.on('select', function(event, selectedIndex){
       }
       var columns = _.keys(rows[0]);
 
-      queryResults.setText(getTable(columns, rows));
+      queryResults.setText(utils.getTable(columns, rows));
       
       screen.render();
       log.debug(rows);
@@ -207,6 +189,16 @@ tablesBox.on('select', function(event, selectedIndex){
       log.error(err);
     });
 });
+
+tablesBox.key('i', function(event){
+  utils.getTableColumns('users')
+    .then(function(cols){
+      tableInfo.setItems(cols);
+      tableInfo.focus();
+      tableInfo.show();
+      screen.render();
+    });
+})
 
 
 rawQuery.on('submit', function(queryText){
@@ -219,7 +211,7 @@ rawQuery.on('submit', function(queryText){
       var rows = resp.rows;
       var columns = _.keys(rows[0]);
 
-      queryResults.setText(getTable(columns, resp.rows));
+      queryResults.setText(utils.getTable(columns, resp.rows));
       
       screen.render();
       log.debug(rows);
@@ -250,3 +242,7 @@ knex('information_schema.tables')
     tablesBox.focus();
     log.debug(tablesBox.ritems);
   })
+  .catch(function(err){
+    log.error(err);
+    return process.exit(0);
+  });
