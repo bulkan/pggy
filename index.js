@@ -55,12 +55,13 @@ var searchBox = blessed.textbox({
 
 
 // Create a box perfectly centered horizontally and vertically.
-var tablesBox = blessed.list({
+var tablesList = blessed.list({
   width: '30%',
   height: '95%',
   label: "{center}tables{/center}",
   tags: true,
   scrollable: true,
+  mouse: true,
   border: {
     type: 'line'
   },
@@ -95,7 +96,7 @@ var tablesBox = blessed.list({
     searchBox.once('submit', function(searchString){
       log.debug(searchString);
       searchBox.hide();
-      tablesBox.focus();
+      tablesList.focus();
       screen.render();
       return cb(searchString)
     })
@@ -145,7 +146,7 @@ var queryResults = blessed.box({
 searchBox.hide();
 tableInfo.hide();
 
-screen.append(tablesBox);
+screen.append(tablesList);
 screen.append(queryResults);
 screen.append(rawQuery);
 screen.append(searchBox);
@@ -168,7 +169,7 @@ var tables = [],
 
 
 // load the table
-tablesBox.on('select', function(event, selectedIndex){
+tablesList.on('select', function(event, selectedIndex){
   var tableName = tables[selectedIndex];
   log.debug('selected table:', tableName);
 
@@ -190,7 +191,7 @@ tablesBox.on('select', function(event, selectedIndex){
     });
 });
 
-tablesBox.key('i', function(event){
+tablesList.key('i', function(event){
   utils.getTableColumns('users')
     .then(function(cols){
       tableInfo.setItems(cols);
@@ -236,11 +237,11 @@ knex('information_schema.tables')
     rows.forEach(function(row){
       tables.push(row.table_name)
     });
-    tablesBox.setItems(tables);
+    tablesList.setItems(tables);
 
     screen.render();
-    tablesBox.focus();
-    log.debug(tablesBox.ritems);
+    tablesList.focus();
+    log.debug(tablesList.ritems);
   })
   .catch(function(err){
     log.error(err);
