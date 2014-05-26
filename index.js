@@ -4,7 +4,8 @@ var util = require('util')
   , bunyan = require('bunyan')
   , _ = require('lodash')
   , Knex = require('knex')
-  , getTableInfo  = require('./lib/tableInfo')
+  , getTableInfo = require('./lib/tableInfo')
+  , getTablesList = require('./lib/tablesList')
   , utils;
 
 var log = bunyan.createLogger({
@@ -53,55 +54,7 @@ var searchBox = blessed.textbox({
 });
 
 
-
-// Create a box perfectly centered horizontally and vertically.
-var tablesList = blessed.list({
-  width: '30%',
-  height: '95%',
-  label: "{center}tables{/center}",
-  tags: true,
-  scrollable: true,
-  mouse: true,
-  border: {
-    type: 'line'
-  },
-  padding: {
-    left: 1,
-    bottom: 2
-  },
-  keys: true,
-  vi: true,
-  style: {
-    bg: 'black',
-    fg: '#cccccc',
-    border: {
-      fg: '#ffffff'
-    },
-    hover: {
-      bg: 'green'
-    },
-    selected: {
-      fg: "gray",
-      bg: "black",
-      inverse: true
-    }
-  },
-  search: function(cb){
-    log.debug('search');
-    searchBox.focus();
-    searchBox.show();
-
-    screen.render();
-
-    searchBox.once('submit', function(searchString){
-      log.debug(searchString);
-      searchBox.hide();
-      tablesList.focus();
-      screen.render();
-      return cb(searchString)
-    })
-  }
-});
+var tablesList = getTablesList(searchBox, log);
 
 var tableInfo = getTableInfo();
 
