@@ -6,6 +6,7 @@ var util = require('util')
   , Knex = require('knex')
   , getTableInfo = require('./lib/tableInfo')
   , getTablesList = require('./lib/tablesList')
+  , getDropMenu = require('./lib/dropMenu')
   , utils;
 
 var log = bunyan.createLogger({
@@ -153,6 +154,23 @@ tablesList.key('i', function(event){
       screen.render();
     });
 })
+
+var dropMenu = getDropMenu(log, screen, function(event){
+  dropMenu.hide();
+  // need to remove table and remove it from tablesList update 
+  tablesList.focus();
+  screen.render();
+});
+
+dropMenu.hide();
+
+// drop table
+tablesList.key('d', function(event){
+  log.info("tablesList.selected:", tablesList.selected);
+  dropMenu.focus();
+  dropMenu.show();
+  screen.render();
+});
 
 
 rawQuery.on('submit', function(queryText){
