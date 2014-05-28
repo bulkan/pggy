@@ -155,9 +155,25 @@ tablesList.key('i', function(event){
     });
 })
 
-var dropMenu = getDropMenu(log, screen, function(event){
+var dropMenu = getDropMenu(log, screen);
+
+dropMenu.submit.on('press', function(event){
   dropMenu.hide();
+  var selectedIndex = tablesList.selected;
+  var tableName = tablesList.getItem(tablesList.selected).content;
+  log.info("tablesList.selected:", tableName);
   // need to remove table and remove it from tablesList update 
+  tablesList.focus();
+
+  knex.schema.dropTableIfExists(tableName).then(function(){
+    tablesList.removeItem(tableName);
+    log.debug(tablesList.ritems)
+    screen.render();
+  });
+});
+
+dropMenu.cancel.on('press', function(){
+  dropMenu.hide();
   tablesList.focus();
   screen.render();
 });
@@ -166,7 +182,6 @@ dropMenu.hide();
 
 // drop table
 tablesList.key('d', function(event){
-  log.info("tablesList.selected:", tablesList.selected);
   dropMenu.focus();
   dropMenu.show();
   screen.render();
