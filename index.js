@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var util = require('util')
   , blessed = require('blessed')
   , conf = require('rc')('pggy', {})
