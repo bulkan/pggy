@@ -55,7 +55,7 @@ var searchBox = blessed.textbox({
 });
 
 
-var tablesList = getTablesList(searchBox, log);
+var tablesList = getTablesList(searchBox, screen, log);
 
 var tableInfo = getTableInfo();
 
