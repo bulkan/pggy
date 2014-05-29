@@ -166,8 +166,9 @@ dropMenu.submit.on('press', function(event){
   tablesList.focus();
 
   knex.schema.dropTableIfExists(tableName).then(function(){
-    tablesList.removeItem(tableName);
-    log.debug(tablesList.ritems)
+    tables.splice(tables.indexOf(tableName), 1);
+    tablesList.setItems(tables);
+    //tablesList.removeItem(tableName, log);
     screen.render();
   });
 });
