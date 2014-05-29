@@ -148,7 +148,9 @@ tablesList.on('select', function(event, selectedIndex){
 });
 
 tablesList.key('i', function(event){
-  utils.getTableColumns('users')
+  var selectedIndex = tablesList.selected;
+  var tableName = tablesList.getItem(tablesList.selected).content;
+  utils.getTableColumns(tableName)
     .then(function(cols){
       tableInfo.setItems(cols);
       tableInfo.focus();
