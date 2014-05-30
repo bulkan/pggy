@@ -10,6 +10,8 @@ Postgres terminal UI using [blessed](https://github.com/chjj/blessed) and [Knex.
 
 Currently a work in progress. There is a few issues & enhancements that need to be done.
 
+See the issues in here & this [Trello board](https://trello.com/b/2bJirC2F/pggy)
+
 ## Features
 
 * **Does not support editing records**
