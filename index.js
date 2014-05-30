@@ -61,6 +61,12 @@ var tablesList = getTablesList(searchBox, screen, log);
 
 var tableInfo = getTableInfo();
 
+tableInfo.key('escape', function(){
+  tableInfo.hide();
+  tablesList.focus();
+  screen.render();
+});
+
 
 var rawQuery = blessed.textbox({
   width: '100%',
