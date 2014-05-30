@@ -1,12 +1,23 @@
-pggy
-====
+## pggy
+<sub>piggy</sub>
 
 [![NPM](https://nodei.co/npm/pggy.png?downloads=true&stars=true)](https://nodei.co/npm/pggy/) [![NPM](https://nodei.co/npm-dl/pggy.png?months=3)](https://nodei.co/npm/pggy/)
 
 
-Postgres terminal UI using `blessed` and `knex` js
+Postgres terminal UI using [blessed](https://github.com/chjj/blessed) and [Knex.js](http://knexjs.org).
 
-![pgy](https://raw.github.com/bulkan/pggy/master/images/screenshot1.png)
+## Introduction
+
+Currently a work in progress. There is a few issues & enhancements that need to be done.
+
+## Features
+
+* **Does not support editing records**
+* viewing of tables in the database
+* running raw queries
+
+
+![screenshot1](https://raw.github.com/bulkan/pggy/master/images/screenshot1.png)
 
 
 
@@ -26,7 +37,7 @@ Create a `.pggyrc` file in your home (or current directory) with the following;
 ```
 
 
-##Keyboard shortcuts
+## Keyboard shortcuts
 
 While the table list has focus; 
 
