@@ -14,7 +14,7 @@ See the issues in here & this [Trello board](https://trello.com/b/2bJirC2F/pggy)
 
 ## Features
 
-* **Does not support editing records**
+* At the moment **Does not** support editing records. Hopefully it will be implemented soon. 
 * viewing of tables in the database
 * running raw queries
 
