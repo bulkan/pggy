@@ -51,3 +51,8 @@ Anywhere;
 
 * `ctrl + r` anywhere to jump to the raw sql text box
 * `ctrl + q` to quit 
+
+
+## LICENSE
+
+MIT
