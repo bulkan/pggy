@@ -27,6 +27,8 @@ See the issues in here & this [Trello board](https://trello.com/b/2bJirC2F/pggy)
 
 `npm install -g pggy`
 
+* There is a dependency on libpq_dev that may also need to be installed before this will complete succesfully. 
+
 Create a `.pggyrc` file in your home (or current directory) with the following;
 
 ```json
@@ -37,7 +39,6 @@ Create a `.pggyrc` file in your home (or current directory) with the following;
     "database": "chinook"
 }
 ```
-
 
 ## Keyboard shortcuts
 
